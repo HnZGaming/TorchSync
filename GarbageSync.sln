@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GarbageSync.Host", "GarbageSync.Host\GarbageSync.Host.csproj", "{D95EEEE3-A651-48B8-ACB5-F60DF5407FF9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GarbageSync.Shared", "GarbageSync.Shared\GarbageSync.Shared.csproj", "{82F8811E-3B03-45C4-A170-B7D426F8AD0F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GarbageSync.Client", "GarbageSync.Client\GarbageSync.Client.csproj", "{58A4AF78-ADDB-481E-9255-8A830BE47563}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D95EEEE3-A651-48B8-ACB5-F60DF5407FF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D95EEEE3-A651-48B8-ACB5-F60DF5407FF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D95EEEE3-A651-48B8-ACB5-F60DF5407FF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D95EEEE3-A651-48B8-ACB5-F60DF5407FF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82F8811E-3B03-45C4-A170-B7D426F8AD0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82F8811E-3B03-45C4-A170-B7D426F8AD0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82F8811E-3B03-45C4-A170-B7D426F8AD0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82F8811E-3B03-45C4-A170-B7D426F8AD0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58A4AF78-ADDB-481E-9255-8A830BE47563}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58A4AF78-ADDB-481E-9255-8A830BE47563}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58A4AF78-ADDB-481E-9255-8A830BE47563}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58A4AF78-ADDB-481E-9255-8A830BE47563}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

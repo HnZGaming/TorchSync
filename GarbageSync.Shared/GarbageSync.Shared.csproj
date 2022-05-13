@@ -1,0 +1,83 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net48</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>10</LangVersion>
+        <TorchDir>$(SolutionDir)TorchBinaries\</TorchDir>
+        <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Humanizer.Core" Version="2.14.1" />
+      <PackageReference Include="LiteNetLib" Version="0.9.5.2" />
+      <PackageReference Include="protobuf-net" Version="3.1.4" />
+    </ItemGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <DebugType>none</DebugType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
+            <HintPath>$(TorchDir)NLog.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Sandbox.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(TorchDir)DedicatedServer64\Sandbox.Common.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Sandbox.Game, Version=0.1.1.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(TorchDir)DedicatedServer64\Sandbox.Game.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Sandbox.Graphics, Version=0.1.1.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(TorchDir)DedicatedServer64\Sandbox.Graphics.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+            <HintPath>$(TorchDir)DedicatedServer64\System.Memory.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="System.Net.Http" />
+        <Reference Include="Torch">
+            <HintPath>$(TorchDir)Torch.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Torch.API">
+            <HintPath>$(TorchDir)Torch.API.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Torch.Server">
+            <HintPath>$(TorchDir)Torch.Server.exe</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(TorchDir)DedicatedServer64\VRage.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Game, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(TorchDir)DedicatedServer64\VRage.Game.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Input, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(TorchDir)DedicatedServer64\VRage.Input.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Library, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(TorchDir)DedicatedServer64\VRage.Library.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Math, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(TorchDir)DedicatedServer64\VRage.Math.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Network, Version=1.0.53.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(TorchDir)DedicatedServer64\VRage.Network.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="WindowsBase" />
+    </ItemGroup>
+
+</Project>
