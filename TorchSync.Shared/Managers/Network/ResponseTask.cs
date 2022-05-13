@@ -1,4 +1,6 @@
-﻿using ProtoBuf.Meta;
+﻿using System;
+using System.Threading.Tasks;
+using ProtoBuf.Meta;
 namespace TorchSync.Shared.Managers.Network;
 
 public class ResponseTask<T> : IResponseTask<T> where T : new() {

@@ -1,4 +1,5 @@
-﻿using Torch.API.Managers;
+﻿using System;
+using Torch.API.Managers;
 namespace TorchSync.Shared.Managers.Network;
 
 public interface INetworkManagerBase : IManager

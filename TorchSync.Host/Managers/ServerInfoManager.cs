@@ -1,21 +1,19 @@
 ﻿using TorchSync.Host.Patches;
 using TorchSync.Shared;
-using TorchSync.Shared.Managers;
 using TorchSync.Shared.Managers.Network;
 using TorchSync.Shared.Messages;
 using LiteNetLib;
 using Torch.API;
 using Torch.Managers;
+
 namespace TorchSync.Host.Managers;
 
 public class ServerInfoManager : Manager
 {
     [Dependency]
     private readonly IHostNetworkManager _networkManager = null!;
-    
-    public ServerInfoManager(ITorchBase torchInstance) : base(torchInstance)
-    {
-    }
+
+    public ServerInfoManager(ITorchBase torchInstance) : base(torchInstance) { }
 
     public override void Attach()
     {

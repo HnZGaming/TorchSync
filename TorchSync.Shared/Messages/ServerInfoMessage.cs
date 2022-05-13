@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using System.Collections.Generic;
+using ProtoBuf;
 namespace TorchSync.Shared.Messages;
 
 [ProtoContract]
@@ -6,7 +7,7 @@ public struct ServerInfoMessage
 {
     [ProtoMember(1)]
     public List<PlayerInfo> Players { get; set; } = new();
-    
+
     public ServerInfoMessage(){}
 }
 

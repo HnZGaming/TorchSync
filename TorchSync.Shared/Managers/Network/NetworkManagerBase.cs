@@ -1,4 +1,8 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using TorchSync.Shared.Utils;
@@ -16,7 +20,7 @@ namespace TorchSync.Shared.Managers.Network;
 public abstract class NetworkManagerBase : Manager, INetworkManagerBase, INetworkCallback
 {
     private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
-    
+
     protected readonly EventBasedNetListener Listener = new();
 
     protected NetManager NetworkManager = null!;
@@ -24,7 +28,7 @@ public abstract class NetworkManagerBase : Manager, INetworkManagerBase, INetwor
     protected readonly ConcurrentBag<NetDataWriter> DataWriterPool = new();
 
     protected readonly SequenceIdGenerator IdGenerator = SequenceIdGenerator.CreateWithStopwatch(TimeSpan.FromSeconds(4));
-    
+
     protected readonly ConcurrentDictionary<uint, IResponseTask> ResponseTasks = new();
     protected readonly INetworkConfig Config;
 
@@ -38,7 +42,7 @@ public abstract class NetworkManagerBase : Manager, INetworkManagerBase, INetwor
             IPv6Enabled = IPv6Mode.Disabled
         };
     }
-    
+
     protected virtual void ListenerOnPeerConnected(NetPeer peer)
     {
         Logger.Info("Peer connected {0} ({1})", peer.EndPoint, peer.Id);
@@ -94,14 +98,14 @@ public abstract class NetworkManagerBase : Manager, INetworkManagerBase, INetwor
         var hash = HashDelegate(del);
         _handlers.Add(hash, CreateNetHandler<TMessage>(del, hash, responseMessageType));
     }
-    
+
     private static uint HashDelegate(Delegate del)
     {
         return del.Method.GetCustomAttribute<RpcHandlerIdAttribute>()?.Id ??
                throw new InvalidOperationException(
                    $"Missing {nameof(RpcHandlerIdAttribute)} on method {del.Method.DeclaringType?.FullName}+{del.Method.Name}");
     }
-    
+
     #region CallSites
 
     private static NetHandlerExpression CreateNetHandler<TMessage>(Delegate handler, uint? responseId = null, Type? responseType = null) where TMessage : new()
@@ -143,7 +147,7 @@ public abstract class NetworkManagerBase : Manager, INetworkManagerBase, INetwor
     }
 
 #endregion
-    
+
     protected void SerializeToNetWriter<T>(T obj, NetDataWriter writer, uint handlerId, bool isResponsible, bool isResponse = false, uint? responseMessageId = default)
     {
         using var stream = new MemoryStream();
@@ -156,7 +160,7 @@ public abstract class NetworkManagerBase : Manager, INetworkManagerBase, INetwor
             writer.Put(responseMessageId.Value);
         writer.Put(stream.GetBuffer(), 0, (int)stream.Length);
     }
-    
+
     private delegate void NetHandlerExpression(
         uint responseMessageId,
         ReadOnlySpan<byte> data,

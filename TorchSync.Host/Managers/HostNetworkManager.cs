@@ -1,4 +1,5 @@
-﻿using TorchSync.Shared.Managers;
+﻿using System.Collections.Generic;
+using TorchSync.Shared.Managers;
 using TorchSync.Shared.Managers.Network;
 using TorchSync.Shared.Utils;
 using LiteNetLib;
@@ -14,7 +15,7 @@ public class HostNetworkManager : NetworkManagerBase, IHostNetworkManager
     {
         Listener.ConnectionRequestEvent += ListenerOnConnectionRequest;
     }
-    
+
     private void ListenerOnConnectionRequest(ConnectionRequest request)
     {
         Logger.Info("Connection request from {0}", request.RemoteEndPoint);
@@ -29,7 +30,7 @@ public class HostNetworkManager : NetworkManagerBase, IHostNetworkManager
         if (NetworkManager.IsRunning)
             Logger.Info("Server listening on {0}", Config.Port);
     }
-    
+
     public void SendMessage<TMessage>(TMessage message, uint handlerId, NetPeer peer) where TMessage : new()
     {
         var writer = DataWriterPool.TakeOrCreate();
