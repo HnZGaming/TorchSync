@@ -11,18 +11,18 @@ public static class SteamPlayerDataPatch
 {
     [ReflectedMethodInfo(typeof(MyDedicatedServerBase), "UpdateSteamServerData")]
     private static readonly MethodInfo UpdateDataMethod = null!;
-    
+
     [ReflectedMethodInfo(typeof(SteamPlayerDataPatch), nameof(Prefix))]
     private static readonly MethodInfo PrefixMethod = null!;
-    
+
     private static bool _dataDirty;
     private static IEnumerable<PlayerInfo>? _playerInfos;
-    
+
     public static void Patch(PatchContext context)
     {
         context.GetPattern(UpdateDataMethod).Prefixes.Add(PrefixMethod);
     }
-    
+
     public static void OnPlayersData(IEnumerable<PlayerInfo> players)
     {
         _dataDirty = true;
@@ -40,13 +40,15 @@ public static class SteamPlayerDataPatch
 
         if (!_dataDirty || _playerInfos is null)
             return false;
-        
+
+        _dataDirty = false;
+
         foreach (var (clientId, name) in _playerInfos.Select(b => (b.ClientId, b.Name))
                      .Concat(__instance.Members.Select(b => (b, __instance.GetMemberName(b)))))
         {
             MyGameService.GameServer.BrowserUpdateUserData(clientId, name, 0);
         }
-        
+
         MyGameService.GameServer.SetBotPlayerCount(_playerInfos.Count());
 
         return false;
