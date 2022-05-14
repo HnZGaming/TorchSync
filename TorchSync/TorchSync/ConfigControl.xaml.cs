@@ -13,16 +13,16 @@ namespace TorchSync
             InitializeComponent();
         }
 
-        public int OtherPortsSelectedIndex { get; set; } = -1;
+        public int RemotePortsSelectedIndex { get; set; } = -1;
 
-        void OnOtherPortsAddClick(object sender, RoutedEventArgs e)
+        void OnRemotePortsAddClick(object sender, RoutedEventArgs e)
         {
-            Config.Instance.OtherPorts.Add(new OtherPort { Number = 0 });
+            Config.Instance.RemotePorts.Add(new RemotePort { Number = 0 });
         }
 
-        void OnOtherPortsRemoveClick(object sender, RoutedEventArgs e)
+        void OnRemotePortsRemoveClick(object sender, RoutedEventArgs e)
         {
-            Config.Instance.OtherPorts.RemoveAt(OtherPortsSelectedIndex);
+            Config.Instance.RemotePorts.RemoveAt(RemotePortsSelectedIndex);
         }
     }
 }

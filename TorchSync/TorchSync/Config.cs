@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -12,28 +13,36 @@ namespace TorchSync
         static readonly ILogger Log = LogManager.GetCurrentClassLogger();
         public static Config Instance { get; set; }
 
+        readonly HashSet<int> _remotePortsSet;
         bool _countRemotePlayerCount;
         int _port = 8100;
 
         public Config()
         {
-            CollectionChangedEventManager.AddHandler(OtherPorts, OnOtherPortsCollectionChanged);
+            _remotePortsSet = new HashSet<int>();
+            CollectionChangedEventManager.AddHandler(RemotePorts, OnRemotePortsCollectionChanged);
         }
 
-        void OnOtherPortsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        void OnRemotePortsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            OnPropertyChanged(nameof(OtherPorts));
+            OnRemotePortPropertyChanged(null, null);
 
-            foreach (var port in OtherPorts)
+            foreach (var remotePort in RemotePorts)
             {
-                PropertyChangedEventManager.RemoveHandler(port, OnOtherPortPropertyChanged, nameof(OtherPort.Number));
-                PropertyChangedEventManager.AddHandler(port, OnOtherPortPropertyChanged, nameof(OtherPort.Number));
+                PropertyChangedEventManager.RemoveHandler(remotePort, OnRemotePortPropertyChanged, nameof(RemotePort.Number));
+                PropertyChangedEventManager.AddHandler(remotePort, OnRemotePortPropertyChanged, nameof(RemotePort.Number));
             }
         }
 
-        void OnOtherPortPropertyChanged(object sender, PropertyChangedEventArgs e)
+        void OnRemotePortPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            OnPropertyChanged(nameof(OtherPorts));
+            _remotePortsSet.Clear();
+            foreach (var remotePort in RemotePorts)
+            {
+                _remotePortsSet.Add(remotePort.Number);
+            }
+
+            OnPropertyChanged(nameof(RemotePorts));
         }
 
         [XmlElement]
@@ -51,10 +60,14 @@ namespace TorchSync
         }
 
         [XmlArray]
-        public ObservableCollection<OtherPort> OtherPorts { get; } = new(); // parser will merge stuff
+        public ObservableCollection<RemotePort> RemotePorts { get; } = new(); // parser will merge stuff
+
+        // use this instead
+        [XmlIgnore]
+        public IEnumerable<int> RemotePortsSet => _remotePortsSet;
     }
 
-    public class OtherPort : ViewModel
+    public class RemotePort : ViewModel
     {
         int _number;
 

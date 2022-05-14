@@ -4,6 +4,6 @@ namespace TorchSync.Http
 {
     public interface ISyncHttpServerEndpoint
     {
-        Task<SyncHttpResult> TryProcess(string path, string body);
+        Task<SyncHttpResult> Respond(string path, string body);
     }
 }

@@ -23,7 +23,7 @@ namespace TorchSync.Http
         public SyncHttpServer(int port, ISyncHttpServerEndpoint endpoint)
         {
             var prefix = MakeUrl(port, "");
-            Log.Info($"prefix: {prefix}");
+            Log.Debug($"prefix: {prefix}");
 
             _endpoint = endpoint;
             _listener = new HttpListener();
@@ -42,25 +42,25 @@ namespace TorchSync.Http
             while (_listener.IsListening)
             {
                 var ctx = await _listener.GetContextAsync();
-                await HandleRequest(ctx);
+                await Respond(ctx);
             }
         }
 
-        async Task HandleRequest(HttpListenerContext ctx)
+        async Task Respond(HttpListenerContext ctx)
         {
             try
             {
                 var path = ctx.Request.RawUrl.Split('?')[0];
                 var reqContent = ReadBody(ctx.Request);
-                Log.Info($"request: {path} {reqContent}");
+                Log.Debug($"request: {path} {reqContent}");
 
-                var (success, data) = await _endpoint.TryProcess(path, reqContent);
+                var (success, data) = await _endpoint.Respond(path, reqContent);
 
                 WriteBody(ctx.Response, data);
                 ctx.Response.StatusCode = success ? 200 : 500;
                 ctx.Response.Close();
 
-                Log.Info($"response: {success}, {data}");
+                Log.Debug($"response: {success}, {data}");
             }
             catch (Exception e)
             {

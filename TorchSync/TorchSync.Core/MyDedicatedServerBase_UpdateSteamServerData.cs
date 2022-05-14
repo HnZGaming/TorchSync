@@ -59,18 +59,21 @@ namespace TorchSync.Core
             if (!_remoteDataDirty) return false;
             _remoteDataDirty = false;
 
-            foreach (var remotePlayer in _remotePlayerInfos)
-            {
-                var (steamId, name) = (remotePlayer.SteamId, remotePlayer.Name);
-                MyGameService.GameServer.BrowserUpdateUserData(steamId, name, 0);
-            }
-
+            // feed the local player list
             foreach (var steamId in __instance.Members)
             {
                 var name = __instance.GetMemberName(steamId);
                 MyGameService.GameServer.BrowserUpdateUserData(steamId, name, 0);
             }
 
+            // feed the remote player list
+            foreach (var remotePlayer in _remotePlayerInfos)
+            {
+                var (steamId, name) = (remotePlayer.SteamId, remotePlayer.Name);
+                MyGameService.GameServer.BrowserUpdateUserData(steamId, name, 0);
+            }
+
+            // remote players -> bots
             MyGameService.GameServer.SetBotPlayerCount(_remotePlayerInfos.Count);
 
             return false;

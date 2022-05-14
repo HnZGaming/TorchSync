@@ -41,12 +41,10 @@ namespace TorchSync.Core
         {
             await TaskUtils.MoveToThreadPool();
 
-            Log.Info($"{nameof(UpdateRemotePlayerCollection)}()");
-
             var results = new List<Task<RemotePlayer[]>>();
-            foreach (var otherPort in Config.Instance.OtherPorts)
+            foreach (var remotePort in Config.Instance.RemotePortsSet)
             {
-                var r = _network.GetRemotePlayers(otherPort.Number);
+                var r = _network.GetRemotePlayers(remotePort);
                 results.Add(r);
             }
 

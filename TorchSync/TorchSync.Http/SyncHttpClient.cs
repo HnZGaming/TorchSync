@@ -22,7 +22,7 @@ namespace TorchSync.Http
 
         public async Task<SyncHttpResult> SendRequest(int port, string path, string body)
         {
-            Log.Info($"send request: {port} {path} {body}");
+            Log.Debug($"send request: {port} {path} {body}");
 
             var url = new Uri(SyncHttpServer.MakeUrl(port, path));
             using var req = new HttpRequestMessage(HttpMethod.Post, url);

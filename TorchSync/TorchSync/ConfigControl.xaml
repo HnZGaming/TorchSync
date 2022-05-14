@@ -13,7 +13,7 @@
             ObjectType="{x:Type torchSync:Commands}"
             MethodName="GetAllCommands" />
         <!-- Port Collection Template -->
-        <DataTemplate x:Key="Port" DataType="{x:Type torchSync:OtherPort}">
+        <DataTemplate x:Key="Port" DataType="{x:Type torchSync:RemotePort}">
             <TextBox Text="{Binding Number}" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
         </DataTemplate>
         <!-- Header Label Template -->
@@ -47,16 +47,16 @@
             <Label Content="Port" />
             <TextBox Text="{Binding Port}" VerticalAlignment="Center"></TextBox>
 
-            <Label Content="Other ports" />
+            <Label Content="Remote ports" />
             <StackPanel Orientation="Vertical">
                 <ListBox
-                    ItemsSource="{Binding OtherPorts}"
+                    ItemsSource="{Binding RemotePorts}"
                     ItemTemplate="{StaticResource Port}"
-                    SelectedIndex="{Binding OtherPortsSelectedIndex, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type torchSync:ConfigControl}}}"
+                    SelectedIndex="{Binding RemotePortsSelectedIndex, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type torchSync:ConfigControl}}}"
                     IsSynchronizedWithCurrentItem="True" />
                 <UniformGrid Columns="2">
-                    <Button Click="OnOtherPortsAddClick" Content="Add" Margin="1" />
-                    <Button Click="OnOtherPortsRemoveClick" Content="Remove" Margin="1" />
+                    <Button Click="OnRemotePortsAddClick" Content="Add" Margin="1" />
+                    <Button Click="OnRemotePortsRemoveClick" Content="Remove" Margin="1" />
                 </UniformGrid>
             </StackPanel>
         </UniformGrid>
