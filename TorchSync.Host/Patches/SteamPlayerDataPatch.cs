@@ -45,8 +45,19 @@ public static class SteamPlayerDataPatch
 
         _dataDirty = false;
 
-        foreach (var (clientId, name) in _playerInfos.Select(b => (b.ClientId, b.Name))
-                     .Concat(__instance.Members.Select(b => (b, __instance.GetMemberName(b)))))
+        var playerInfos = new List<PlayerInfo>();
+        playerInfos.AddRange(_playerInfos);
+
+        foreach (var memberId in __instance.Members)
+        {
+            playerInfos.Add(new PlayerInfo
+            {
+                ClientId = memberId,
+                Name = __instance.GetMemberName(memberId),
+            });
+        }
+
+        foreach (var (clientId, name) in playerInfos)
         {
             MyGameService.GameServer.BrowserUpdateUserData(clientId, name, 0);
         }
