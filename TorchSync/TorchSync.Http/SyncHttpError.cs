@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace TorchSync.Http
 {
@@ -7,5 +6,10 @@ namespace TorchSync.Http
     {
         [JsonProperty("message", Required = Required.Always)]
         public string Message;
+
+        public override string ToString()
+        {
+            return $"{nameof(Message)}: {Message}";
+        }
     }
 }

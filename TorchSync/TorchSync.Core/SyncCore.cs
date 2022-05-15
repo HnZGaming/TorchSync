@@ -117,7 +117,7 @@ namespace TorchSync.Core
             if (!success)
             {
                 var error = JsonConvert.DeserializeObject<SyncHttpError>(body);
-                Log.Warn($"{nameof(GetRemotePlayers)} error: {error}");
+                Log.Warn($"{nameof(GetRemotePlayers)}() error: {error.Message}");
                 return Array.Empty<RemotePlayer>();
             }
 
@@ -132,7 +132,7 @@ namespace TorchSync.Core
             if (!success)
             {
                 var error = JsonConvert.DeserializeObject<SyncHttpError>(body);
-                Log.Warn($"{nameof(GetRemotePlayers)} error: {error}");
+                Log.Warn($"{nameof(PostChatMessage)}() error: {error.Message}");
             }
         }
 

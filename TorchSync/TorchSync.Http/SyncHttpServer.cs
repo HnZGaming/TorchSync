@@ -67,7 +67,7 @@ namespace TorchSync.Http
             {
                 Log.Error(e);
 
-                var error = SyncHttpResult.FromError(e.ToString());
+                var error = SyncHttpResult.FromException(e);
                 WriteBody(ctx.Response, JsonConvert.SerializeObject(error));
                 ctx.Response.StatusCode = 500;
                 ctx.Response.Close();

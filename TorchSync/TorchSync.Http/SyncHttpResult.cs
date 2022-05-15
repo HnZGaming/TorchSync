@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace TorchSync.Http
@@ -19,6 +20,13 @@ namespace TorchSync.Http
         public static SyncHttpResult FromError(string message)
         {
             var error = new SyncHttpError { Message = message };
+            return new SyncHttpResult(false, JsonConvert.SerializeObject(error));
+        }
+
+        public static SyncHttpResult FromException(Exception e)
+        {
+            var msg = (e.InnerException ?? e).Message;
+            var error = new SyncHttpError { Message = msg };
             return new SyncHttpResult(false, JsonConvert.SerializeObject(error));
         }
     }
