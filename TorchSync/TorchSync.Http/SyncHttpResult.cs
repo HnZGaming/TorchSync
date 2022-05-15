@@ -4,8 +4,26 @@ using Newtonsoft.Json;
 
 namespace TorchSync.Http
 {
-    public record SyncHttpResult(bool Success, string Body)
+    public sealed class SyncHttpResult
     {
+        [JsonProperty("success", Required = Required.Always)]
+        public bool Success;
+
+        [JsonProperty("body", Required = Required.Always)]
+        public string Body;
+
+        public SyncHttpResult(bool success, string body)
+        {
+            Success = success;
+            Body = body;
+        }
+
+        public void Deconstruct(out bool success, out string body)
+        {
+            success = Success;
+            body = Body;
+        }
+
         public static SyncHttpResult FromSuccess(string body)
         {
             return new SyncHttpResult(true, body);

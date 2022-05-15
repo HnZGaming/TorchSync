@@ -5,10 +5,14 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
+using Sandbox;
 using Sandbox.Game.World;
 using Sandbox.ModAPI;
 using Torch.API.Managers;
+using Torch.Mod;
+using Torch.Mod.Messages;
 using TorchSync.Http;
+using TorchSync.Utils;
 using Utils.General;
 using Utils.Torch;
 using VRage.Game.ModAPI;
@@ -28,7 +32,7 @@ namespace TorchSync.Core
             _chatManager = chatManagerServer;
             _chatManager.MessageRecieved += OnMessageReceived;
 
-            _httpServer = new SyncHttpServer(Config.Instance.Port, this);
+            _httpServer = new SyncHttpServer("localhost", Config.Instance.Port, this);
             _httpServer.Start().Forget(Log);
 
             _httpClient = new SyncHttpClient();
@@ -45,7 +49,7 @@ namespace TorchSync.Core
             if (restartHttpServer)
             {
                 _httpServer?.Close();
-                _httpServer = new SyncHttpServer(Config.Instance.Port, this);
+                _httpServer = new SyncHttpServer("localhost", Config.Instance.Port, this);
                 _httpServer.Start().Forget(Log);
 
                 _httpClient?.Close();
@@ -84,14 +88,14 @@ namespace TorchSync.Core
 
             var chatMessage = new ChatMessage
             {
-                Header = Config.Instance.ChatHeader,
+                Header = Config.Instance.Name,
                 Name = msg.Author,
                 Message = msg.Message,
             };
 
-            foreach (var remotePort in Config.Instance.RemotePortsSet)
+            foreach (var remoteIp in Config.Instance.RemoteIpsSet)
             {
-                PostChatMessage(remotePort, chatMessage).Forget(Log);
+                PostChatMessage(remoteIp, chatMessage).Forget(Log);
             }
         }
 
@@ -100,7 +104,7 @@ namespace TorchSync.Core
             await TaskUtils.MoveToThreadPool();
 
             var results = new List<Task<RemotePlayer[]>>();
-            foreach (var remotePort in Config.Instance.RemotePortsSet)
+            foreach (var remotePort in Config.Instance.RemoteIpsSet)
             {
                 var r = GetRemotePlayers(remotePort);
                 results.Add(r);
@@ -111,9 +115,9 @@ namespace TorchSync.Core
             MyDedicatedServerBase_UpdateSteamServerData.UpdateRemotePlayerCollection(remotePlayers);
         }
 
-        async Task<RemotePlayer[]> GetRemotePlayers(int port)
+        async Task<RemotePlayer[]> GetRemotePlayers(IpPort remoteIp)
         {
-            var (success, body) = await _httpClient.SendRequest(port, "/v1/get_remote_players", "{}");
+            var (success, body) = await _httpClient.SendRequest(remoteIp, "/v1/get_remote_players", "{}");
             if (!success)
             {
                 var error = JsonConvert.DeserializeObject<SyncHttpError>(body);
@@ -125,10 +129,10 @@ namespace TorchSync.Core
             return JToken.Parse(body)["remote_players"].ToObject<RemotePlayer[]>();
         }
 
-        public async Task PostChatMessage(int port, ChatMessage chatMessage)
+        public async Task PostChatMessage(IpPort remoteIp, ChatMessage chatMessage)
         {
             var reqBody = JsonConvert.SerializeObject(chatMessage);
-            var (success, body) = await _httpClient.SendRequest(port, "/v1/post_chat_message", reqBody);
+            var (success, body) = await _httpClient.SendRequest(remoteIp, "/v1/post_chat_message", reqBody);
             if (!success)
             {
                 var error = JsonConvert.DeserializeObject<SyncHttpError>(body);
@@ -171,11 +175,58 @@ namespace TorchSync.Core
                     await VRageUtils.MoveToThreadPool();
                     return SyncHttpResult.FromSuccess("{}");
                 }
+                case "get_info":
+                {
+                    Log.Debug("get_info");
+
+                    var info = GetServerInfo();
+                    var res = JsonConvert.SerializeObject(info);
+                    Log.Info($"response: {res}");
+                    return SyncHttpResult.FromSuccess(res);
+                }
                 default:
                 {
                     return SyncHttpResult.FromError($"api not found for path: {path}");
                 }
             }
+        }
+
+        ServerInfo GetServerInfo() => new()
+        {
+            Name = Config.Instance.Name,
+            HttpAddress = new IpPort("localhost", Config.Instance.Port),
+            GameAddress = new IpPort
+            {
+                Ip = IpConfigMe.GetPublicIpAddress(),
+                Port = MySandboxGame.ConfigDedicated.ServerPort,
+            },
+        };
+
+        public async Task<List<ServerInfo>> GetRemoteServerInfo()
+        {
+            var tasks = new List<Task<SyncHttpResult>>();
+            foreach (var remoteIp in Config.Instance.RemoteIpsSet)
+            {
+                var task = _httpClient.SendRequest(remoteIp, "/v1/get_info", "{}");
+                tasks.Add(task);
+            }
+
+            var results = await Task.WhenAll(tasks);
+            var outs = new List<ServerInfo>();
+            foreach (var (success, body) in results)
+            {
+                if (!success)
+                {
+                    var error = JsonConvert.DeserializeObject<SyncHttpError>(body);
+                    Log.Warn($"{nameof(GetRemoteServerInfo)}() error: {error.Message}");
+                    continue;
+                }
+
+                var serverInfo = JsonConvert.DeserializeObject<ServerInfo>(body);
+                outs.Add(serverInfo);
+            }
+
+            return outs;
         }
 
         static IEnumerable<RemotePlayer> GetLocalPlayers()
@@ -188,6 +239,17 @@ namespace TorchSync.Core
                 SteamId = p.SteamUserId,
                 Name = p.DisplayName,
             });
+        }
+
+        public async Task Jump(ulong steamId, IpPort address)
+        {
+            Log.Info($"{nameof(Jump)}({steamId}, {address})");
+
+            var steamAddress = $"steam://{address.Ip}:{address.Port}";
+            Log.Info($"jumping: {steamAddress}");
+
+            var msg = new JoinServerMessage(steamAddress);
+            ModCommunication.SendMessageTo(msg, steamId);
         }
     }
 }

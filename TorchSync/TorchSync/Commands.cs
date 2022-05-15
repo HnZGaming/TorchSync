@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using NLog;
 using Torch.Commands;
 using Torch.Commands.Permissions;
-using TorchSync.Core;
+using Utils.General;
 using Utils.Torch;
 using VRage.Game.ModAPI;
 
@@ -11,6 +13,8 @@ namespace TorchSync
     [Category("sync")]
     public sealed class Commands : CommandModule
     {
+        static readonly ILogger Log = LogManager.GetCurrentClassLogger();
+
         Plugin Plugin => (Plugin)Context.Plugin;
 
         public static IEnumerable<CommandAttribute> GetAllCommands()
@@ -41,16 +45,47 @@ namespace TorchSync
             Plugin.ReloadConfig();
         });
 
-        [Command("chat")]
-        [Permission(MyPromoteLevel.Moderator)]
-        public void SendChatMessageToOtherServer(int port, string message) => this.CatchAndReport(async () =>
+        [Command("jump", "Jump to other server")]
+        [Permission(MyPromoteLevel.None)]
+        public void Jump(string destination = null) => this.CatchAndReport(async () =>
         {
-            await Plugin.Core.PostChatMessage(port, new ChatMessage
+            Context.Respond("Fetching server list...");
+            var infoList = await Plugin.Core.GetRemoteServerInfo();
+            if (infoList.Count == 0)
             {
-                Header = Config.Instance.ChatHeader,
-                Name = "Server",
-                Message = message,
-            });
+                Context.Respond("No online servers found");
+                return;
+            }
+
+            foreach (var serverInfo in infoList)
+            {
+                if (serverInfo.Name == destination)
+                {
+                    if (Context.Player is not { } player)
+                    {
+                        Context.Respond("must be a player");
+                        return;
+                    }
+
+                    Context.Respond("Jumping...");
+                    Plugin.Core.Jump(player.SteamUserId, serverInfo.GameAddress).Forget(Log);
+                    return;
+                }
+            }
+
+            var sb = new StringBuilder();
+            sb.AppendLine();
+            sb.AppendLine("Destinations: ");
+
+            foreach (var serverInfo in infoList)
+            {
+                var name = serverInfo.Name;
+                sb.AppendLine($"> {name}");
+            }
+
+            sb.Append("Type !sync jump <destination>");
+
+            Context.Respond(sb.ToString());
         });
     }
 }

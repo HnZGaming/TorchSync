@@ -15,20 +15,28 @@ namespace TorchSync.Http
         readonly HttpListener _listener;
         readonly ISyncHttpServerEndpoint _endpoint;
 
-        public static string MakeUrl(int port, string path)
+        public static Uri MakeUrl(string ip, int port, string path)
         {
             var p = string.IsNullOrEmpty(path) ? "/" : path;
-            return $"http://localhost:{port}{p}";
+            var u = $"http://{ip}:{port}{p}";
+            try
+            {
+                return new Uri(u);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException(u, e);
+            }
         }
 
-        public SyncHttpServer(int port, ISyncHttpServerEndpoint endpoint)
+        public SyncHttpServer(string ip, int port, ISyncHttpServerEndpoint endpoint)
         {
-            var prefix = MakeUrl(port, "");
+            var prefix = MakeUrl(ip, port, "");
             Log.Debug($"prefix: {prefix}");
 
             _endpoint = endpoint;
             _listener = new HttpListener();
-            _listener.Prefixes.Add(prefix);
+            _listener.Prefixes.Add(prefix.AbsoluteUri);
         }
 
         public void Close()

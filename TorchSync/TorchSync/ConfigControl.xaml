@@ -13,8 +13,11 @@
             ObjectType="{x:Type local:Commands}"
             MethodName="GetAllCommands" />
         <!-- Collection Templates -->
-        <DataTemplate x:Key="Port" DataType="{x:Type local:RemotePort}">
-            <TextBox Text="{Binding Number}" VerticalAlignment="Center" MinWidth="100" />
+        <DataTemplate x:Key="Port" DataType="{x:Type local:IpPort}">
+            <StackPanel Orientation="Horizontal">
+                <TextBox Text="{Binding Ip}" VerticalAlignment="Center" MinWidth="60" />
+                <TextBox Text="{Binding Port}" VerticalAlignment="Center" MinWidth="40" />
+            </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="ChatAuthor" DataType="{x:Type local:ChatAuthor}">
             <TextBox Text="{Binding Name}" VerticalAlignment="Center" MinWidth="100" />
@@ -47,18 +50,22 @@
         <Label Content="Configs" Template="{StaticResource Header}" />
         <ItemsControl>
             <StackPanel Orientation="Horizontal">
-                <Label Content="Count remote players" />
-                <CheckBox IsChecked="{Binding CountRemotePlayerCount}" VerticalAlignment="Center" />
+                <Label Content="Name" />
+                <TextBox Text="{Binding Name}" VerticalAlignment="Center" MinWidth="100" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label Content="Port" />
                 <TextBox Text="{Binding Port}" VerticalAlignment="Center" MinWidth="100" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <Label Content="Remote ports" />
+                <Label Content="Count remote players" />
+                <CheckBox IsChecked="{Binding CountRemotePlayerCount}" VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Remote IPs" />
                 <StackPanel Orientation="Vertical">
                     <ListBox
-                        ItemsSource="{Binding RemotePorts}"
+                        ItemsSource="{Binding RemoteIps}"
                         ItemTemplate="{StaticResource Port}"
                         SelectedIndex="{Binding RemotePortsSelectedIndex, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:ConfigControl}}}"
                         IsSynchronizedWithCurrentItem="True" />
@@ -67,10 +74,6 @@
                         <Button Click="OnRemotePortsRemoveClick" Content="Remove" Margin="1" />
                     </UniformGrid>
                 </StackPanel>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label Content="Chat Header" />
-                <TextBox Text="{Binding ChatHeader}" VerticalAlignment="Center" MinWidth="100" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label Content="Remote chat authors" />

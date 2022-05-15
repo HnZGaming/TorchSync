@@ -156,17 +156,21 @@
         <Compile Include="TorchSync.Core\ChatMessage.cs" />
         <Compile Include="TorchSync.Core\MyDedicatedServerBase_UpdateSteamServerData.cs" />
         <Compile Include="TorchSync.Core\RemotePlayer.cs" />
+        <Compile Include="TorchSync.Core\ServerInfo.cs" />
         <Compile Include="TorchSync.Core\SyncCore.cs" />
         <Compile Include="TorchSync.Http\ISyncHttpServerEndpoint.cs" />
         <Compile Include="TorchSync.Http\SyncHttpClient.cs" />
         <Compile Include="TorchSync.Http\SyncHttpError.cs" />
         <Compile Include="TorchSync.Http\SyncHttpServer.cs" />
         <Compile Include="TorchSync.Http\SyncHttpResult.cs" />
+        <Compile Include="TorchSync.Utils\IpConfigMe.cs" />
+        <Compile Include="TorchSync\ChatAuthor.cs" />
         <Compile Include="TorchSync\Commands.cs" />
         <Compile Include="TorchSync\Config.cs" />
         <Compile Include="TorchSync\ConfigControl.xaml.cs">
           <DependentUpon>ConfigControl.xaml</DependentUpon>
         </Compile>
+        <Compile Include="TorchSync\IpPort.cs" />
         <Compile Include="TorchSync\Plugin.cs" />
         <EmbeddedResource Include="Properties\Resources.resx">
             <Generator>ResXFileCodeGenerator</Generator>

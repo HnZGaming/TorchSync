@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using NLog;
+using TorchSync.Core;
 
 namespace TorchSync
 {
@@ -19,12 +20,12 @@ namespace TorchSync
 
         void OnRemotePortsAddClick(object sender, RoutedEventArgs e)
         {
-            Config.Instance.RemotePorts.Add(new RemotePort { Number = 0 });
+            Config.Instance.RemoteIps.Add(new IpPort { Port = 0 });
         }
 
         void OnRemotePortsRemoveClick(object sender, RoutedEventArgs e)
         {
-            Config.Instance.RemotePorts.RemoveAt(RemotePortsSelectedIndex);
+            Config.Instance.RemoteIps.RemoveAt(RemotePortsSelectedIndex);
         }
 
         void OnRemoteChatAuthorAddClick(object sender, RoutedEventArgs e)
