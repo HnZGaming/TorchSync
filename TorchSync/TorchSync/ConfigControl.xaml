@@ -6,15 +6,18 @@
              xmlns:local="clr-namespace:TorchSync"
              d:DataContext="{x:Static local:Config.Instance }"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="600" d:DesignWidth="300">
     <UserControl.Resources>
         <ObjectDataProvider
             x:Key="AllCommands"
             ObjectType="{x:Type local:Commands}"
             MethodName="GetAllCommands" />
-        <!-- Port Collection Template -->
+        <!-- Collection Templates -->
         <DataTemplate x:Key="Port" DataType="{x:Type local:RemotePort}">
             <TextBox Text="{Binding Number}" VerticalAlignment="Center" MinWidth="100" />
+        </DataTemplate>
+        <DataTemplate x:Key="ChatAuthor" DataType="{x:Type local:ChatAuthor}">
+            <TextBox Text="{Binding Name}" VerticalAlignment="Center" MinWidth="100" />
         </DataTemplate>
         <!-- Header Label Template -->
         <ControlTemplate x:Key="Header" TargetType="Label">
@@ -68,6 +71,20 @@
             <StackPanel Orientation="Horizontal">
                 <Label Content="Chat Header" />
                 <TextBox Text="{Binding ChatHeader}" VerticalAlignment="Center" MinWidth="100" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Remote chat authors" />
+                <StackPanel Orientation="Vertical">
+                    <ListBox
+                        ItemsSource="{Binding RemoteChatAuthors}"
+                        ItemTemplate="{StaticResource ChatAuthor}"
+                        SelectedIndex="{Binding RemoteChatAuthorSelectedIndex, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:ConfigControl}}}"
+                        IsSynchronizedWithCurrentItem="True" />
+                    <UniformGrid Columns="2">
+                        <Button Click="OnRemoteChatAuthorAddClick" Content="Add" Margin="1" />
+                        <Button Click="OnRemoteChatAuthorRemoveClick" Content="Remove" Margin="1" />
+                    </UniformGrid>
+                </StackPanel>
             </StackPanel>
         </ItemsControl>
     </StackPanel>

@@ -15,6 +15,8 @@ namespace TorchSync
 
         public int RemotePortsSelectedIndex { get; set; }
 
+        public int RemoteChatAuthorSelectedIndex { get; set; }
+
         void OnRemotePortsAddClick(object sender, RoutedEventArgs e)
         {
             Config.Instance.RemotePorts.Add(new RemotePort { Number = 0 });
@@ -23,6 +25,16 @@ namespace TorchSync
         void OnRemotePortsRemoveClick(object sender, RoutedEventArgs e)
         {
             Config.Instance.RemotePorts.RemoveAt(RemotePortsSelectedIndex);
+        }
+
+        void OnRemoteChatAuthorAddClick(object sender, RoutedEventArgs e)
+        {
+            Config.Instance.RemoteChatAuthors.Add(new ChatAuthor { Name = "" });
+        }
+
+        void OnRemoteChatAuthorRemoveClick(object sender, RoutedEventArgs e)
+        {
+            Config.Instance.RemoteChatAuthors.RemoveAt(RemoteChatAuthorSelectedIndex);
         }
     }
 }

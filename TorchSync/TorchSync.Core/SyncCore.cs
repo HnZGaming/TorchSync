@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -73,9 +72,12 @@ namespace TorchSync.Core
 
         void OnMessageReceived(TorchChatMessage msg, ref bool consumed)
         {
-            if (msg.AuthorSteamId == null)
+            if (msg.AuthorSteamId == null) // server message
             {
-                return;
+                if (!Config.Instance.RemoteChatAuthorSet.Contains(msg.Author))
+                {
+                    return;
+                }
             }
 
             Log.Info($"chat message: {msg.Message}");

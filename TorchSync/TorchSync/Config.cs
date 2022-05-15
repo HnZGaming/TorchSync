@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Xml.Serialization;
 using NLog;
 using Torch;
@@ -13,37 +11,37 @@ namespace TorchSync
         static readonly ILogger Log = LogManager.GetCurrentClassLogger();
         public static Config Instance { get; set; }
 
-        readonly HashSet<int> _remotePortsSet;
+        readonly HashSet<int> _remotePorts;
+        readonly HashSet<string> _remoteChatAuthors;
         bool _countRemotePlayerCount;
         int _port = 8100;
         string _chatHeader = "Example";
 
         public Config()
         {
-            _remotePortsSet = new HashSet<int>();
-            CollectionChangedEventManager.AddHandler(RemotePorts, OnRemotePortsCollectionChanged);
-        }
-
-        void OnRemotePortsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            OnRemotePortPropertyChanged(null, null);
-
-            foreach (var remotePort in RemotePorts)
+            _remotePorts = new HashSet<int>();
+            CollectionChangedEventManager.AddHandler(RemotePorts, (_, _) =>
             {
-                PropertyChangedEventManager.RemoveHandler(remotePort, OnRemotePortPropertyChanged, nameof(RemotePort.Number));
-                PropertyChangedEventManager.AddHandler(remotePort, OnRemotePortPropertyChanged, nameof(RemotePort.Number));
-            }
-        }
+                _remotePorts.Clear();
+                foreach (var remotePort in RemotePorts)
+                {
+                    _remotePorts.Add(remotePort.Number);
+                }
 
-        void OnRemotePortPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            _remotePortsSet.Clear();
-            foreach (var remotePort in RemotePorts)
+                OnPropertyChanged(nameof(RemotePorts));
+            });
+
+            _remoteChatAuthors = new HashSet<string>();
+            CollectionChangedEventManager.AddHandler(RemoteChatAuthors, (_, _) =>
             {
-                _remotePortsSet.Add(remotePort.Number);
-            }
+                _remoteChatAuthors.Clear();
+                foreach (var chatAuthor in RemoteChatAuthors)
+                {
+                    _remoteChatAuthors.Add(chatAuthor.Name);
+                }
 
-            OnPropertyChanged(nameof(RemotePorts));
+                OnPropertyChanged(nameof(RemoteChatAuthors));
+            });
         }
 
         [XmlElement]
@@ -61,11 +59,14 @@ namespace TorchSync
         }
 
         [XmlArray]
-        public ObservableCollection<RemotePort> RemotePorts { get; } = new(); // parser will merge stuff
+        public ViewModelCollection<RemotePort> RemotePorts { get; } = new(); // parser will merge stuff
+
+        [XmlArray]
+        public ViewModelCollection<ChatAuthor> RemoteChatAuthors { get; } = new(); // parser will merge stuff
 
         // use this instead
         [XmlIgnore]
-        public IEnumerable<int> RemotePortsSet => _remotePortsSet;
+        public IEnumerable<int> RemotePortsSet => _remotePorts;
 
         [XmlElement]
         public string ChatHeader
@@ -73,6 +74,10 @@ namespace TorchSync
             get => _chatHeader;
             set => SetValue(ref _chatHeader, value);
         }
+
+        // use this instead
+        [XmlIgnore]
+        public IEnumerable<string> RemoteChatAuthorSet => _remoteChatAuthors;
     }
 
     public class RemotePort : ViewModel
@@ -84,6 +89,18 @@ namespace TorchSync
         {
             get => _number;
             set => SetValue(ref _number, value);
+        }
+    }
+
+    public class ChatAuthor : ViewModel
+    {
+        string _name;
+
+        [XmlAttribute]
+        public string Name
+        {
+            get => _name;
+            set => SetValue(ref _name, value);
         }
     }
 }
