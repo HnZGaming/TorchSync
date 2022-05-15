@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.Xml.Serialization;
 using NLog;
 using Torch;
+using Utils.Torch;
 
 namespace TorchSync
 {

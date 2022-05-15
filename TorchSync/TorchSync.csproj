@@ -168,7 +168,6 @@
           <DependentUpon>ConfigControl.xaml</DependentUpon>
         </Compile>
         <Compile Include="TorchSync\Plugin.cs" />
-        <Compile Include="TorchSync\ViewModelCollection.cs" />
         <EmbeddedResource Include="Properties\Resources.resx">
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>Resources.Designer.cs</LastGenOutput>
