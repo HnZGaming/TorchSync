@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NLog;
@@ -23,14 +24,18 @@ namespace TorchSync.Core
 
         public void UpdateConfig()
         {
-            MyDedicatedServerBase_UpdateSteamServerData.Enabled = Config.Instance.CountRemotePlayerCount;
+            if (!Config.Instance.CountRemotePlayerCount)
+            {
+                MyDedicatedServerBase_UpdateSteamServerData.UpdateRemotePlayerCollection(Array.Empty<RemotePlayer>());
+                Log.Info("cleared remote player list");
+            }
         }
 
         public void Update()
         {
             if (Config.Instance.CountRemotePlayerCount)
             {
-                if (MySession.Static.GameplayFrameCounter % 600 == 0)
+                if (MySession.Static.GameplayFrameCounter % (60 * 10) == 0)
                 {
                     UpdateRemotePlayerCollection().Forget(Log);
                 }

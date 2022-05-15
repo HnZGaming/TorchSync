@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using NLog;
 using Sandbox.Engine.Multiplayer;
@@ -21,8 +22,6 @@ namespace TorchSync.Core
             _remotePlayerInfos = new ConcurrentCachingList<RemotePlayer>();
         }
 
-        public static bool Enabled { get; set; }
-
         public static void Patch(PatchContext ctx)
         {
             var patchee = typeof(MyDedicatedServerBase).GetMethod(nameof(UpdateSteamServerData), BindingFlags.Instance | BindingFlags.NonPublic);
@@ -40,37 +39,40 @@ namespace TorchSync.Core
             }
 
             _remotePlayerInfos.ApplyChanges();
-            Log.Info($"remote players: {_remotePlayerInfos.ToStringSeq()}");
+            Log.Debug($"remote players: {_remotePlayerInfos.ToStringSeq()}");
 
             _remoteDataDirty = true;
         }
 
-        static bool UpdateSteamServerData(MyDedicatedServerBase __instance, ref bool __field_m_gameServerDataDirty)
+        static bool UpdateSteamServerData(MyDedicatedServerBase __instance, ref bool __field_m_gameServerDataDirty, ref IDictionary __field_m_memberData)
         {
-            if (!Enabled) return true;
-
+            // original code copied & pasted
             if (__field_m_gameServerDataDirty)
             {
-                __field_m_gameServerDataDirty = false;
                 MyGameService.GameServer.SetMapName(__instance.WorldName);
                 MyGameService.GameServer.SetMaxPlayerCount(__instance.MemberLimit);
+                foreach (DictionaryEntry o in __field_m_memberData)
+                {
+                    var steamId = (ulong)o.Key;
+                    var name = __instance.GetMemberName(steamId);
+                    MyGameService.GameServer.BrowserUpdateUserData(steamId, name, 0);
+                }
+
+                __field_m_gameServerDataDirty = false;
             }
 
+            // feed remote players if the collection was updated
             if (!_remoteDataDirty) return false;
             _remoteDataDirty = false;
 
-            // feed the local player list
-            foreach (var steamId in __instance.Members)
-            {
-                var name = __instance.GetMemberName(steamId);
-                MyGameService.GameServer.BrowserUpdateUserData(steamId, name, 0);
-            }
+            Log.Debug($"feeding remote player collection: {_remotePlayerInfos.Count}");
 
             // feed the remote player list
             foreach (var remotePlayer in _remotePlayerInfos)
             {
                 var (steamId, name) = (remotePlayer.SteamId, remotePlayer.Name);
                 MyGameService.GameServer.BrowserUpdateUserData(steamId, name, 0);
+                Log.Debug($"<{steamId}>: \"{name}\"");
             }
 
             // remote players -> bots
