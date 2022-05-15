@@ -3,24 +3,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:torchSync="clr-namespace:TorchSync"
-             d:DataContext="{x:Static torchSync:Config.Instance }"
+             xmlns:local="clr-namespace:TorchSync"
+             d:DataContext="{x:Static local:Config.Instance }"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <ObjectDataProvider
             x:Key="AllCommands"
-            ObjectType="{x:Type torchSync:Commands}"
+            ObjectType="{x:Type local:Commands}"
             MethodName="GetAllCommands" />
         <!-- Port Collection Template -->
-        <DataTemplate x:Key="Port" DataType="{x:Type torchSync:RemotePort}">
+        <DataTemplate x:Key="Port" DataType="{x:Type local:RemotePort}">
             <TextBox Text="{Binding Number}" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
         </DataTemplate>
         <!-- Header Label Template -->
         <ControlTemplate x:Key="Header" TargetType="Label">
             <Grid>
                 <Label FontWeight="700" Margin="0,10,0,0">
-                    <ContentPresenter />
+                    <UserControl>
+                        <ContentPresenter />
+                    </UserControl>
                 </Label>
             </Grid>
         </ControlTemplate>
@@ -40,25 +42,29 @@
         </ItemsControl>
         <!-- Configs -->
         <Label Content="Configs" Template="{StaticResource Header}" />
-        <UniformGrid Columns="2">
-            <Label Content="Count remote players" />
-            <CheckBox IsChecked="{Binding CountRemotePlayerCount}" VerticalAlignment="Center" />
-
-            <Label Content="Port" />
-            <TextBox Text="{Binding Port}" VerticalAlignment="Center"></TextBox>
-
-            <Label Content="Remote ports" />
-            <StackPanel Orientation="Vertical">
-                <ListBox
-                    ItemsSource="{Binding RemotePorts}"
-                    ItemTemplate="{StaticResource Port}"
-                    SelectedIndex="{Binding RemotePortsSelectedIndex, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type torchSync:ConfigControl}}}"
-                    IsSynchronizedWithCurrentItem="True" />
-                <UniformGrid Columns="2">
-                    <Button Click="OnRemotePortsAddClick" Content="Add" Margin="1" />
-                    <Button Click="OnRemotePortsRemoveClick" Content="Remove" Margin="1" />
-                </UniformGrid>
+        <ItemsControl>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Count remote players" />
+                <CheckBox IsChecked="{Binding CountRemotePlayerCount}" VerticalAlignment="Center" />
             </StackPanel>
-        </UniformGrid>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Port" />
+                <TextBox Text="{Binding Port}" VerticalAlignment="Center"></TextBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Remote ports" />
+                <StackPanel Orientation="Vertical">
+                    <ListBox
+                        ItemsSource="{Binding RemotePorts}"
+                        ItemTemplate="{StaticResource Port}"
+                        SelectedIndex="{Binding RemotePortsSelectedIndex, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:ConfigControl}}}"
+                        IsSynchronizedWithCurrentItem="True" />
+                    <UniformGrid Columns="2">
+                        <Button Click="OnRemotePortsAddClick" Content="Add" Margin="1" />
+                        <Button Click="OnRemotePortsRemoveClick" Content="Remove" Margin="1" />
+                    </UniformGrid>
+                </StackPanel>
+            </StackPanel>
+        </ItemsControl>
     </StackPanel>
 </UserControl>

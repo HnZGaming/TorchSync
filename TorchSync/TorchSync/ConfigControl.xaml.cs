@@ -13,7 +13,7 @@ namespace TorchSync
             InitializeComponent();
         }
 
-        public int RemotePortsSelectedIndex { get; set; } = -1;
+        public int RemotePortsSelectedIndex { get; set; }
 
         void OnRemotePortsAddClick(object sender, RoutedEventArgs e)
         {
