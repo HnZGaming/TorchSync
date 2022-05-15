@@ -153,10 +153,10 @@
             <DependentUpon>Resources.resx</DependentUpon>
         </Compile>
         <Compile Include="System.Runtime.CompilerServices\IsExternalInit.cs" />
+        <Compile Include="TorchSync.Core\ChatMessage.cs" />
         <Compile Include="TorchSync.Core\MyDedicatedServerBase_UpdateSteamServerData.cs" />
         <Compile Include="TorchSync.Core\RemotePlayer.cs" />
         <Compile Include="TorchSync.Core\SyncCore.cs" />
-        <Compile Include="TorchSync.Core\SyncNetwork.cs" />
         <Compile Include="TorchSync.Http\ISyncHttpServerEndpoint.cs" />
         <Compile Include="TorchSync.Http\SyncHttpClient.cs" />
         <Compile Include="TorchSync.Http\SyncHttpError.cs" />

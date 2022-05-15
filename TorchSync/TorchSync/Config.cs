@@ -16,6 +16,7 @@ namespace TorchSync
         readonly HashSet<int> _remotePortsSet;
         bool _countRemotePlayerCount;
         int _port = 8100;
+        string _chatHeader = "Example";
 
         public Config()
         {
@@ -65,6 +66,13 @@ namespace TorchSync
         // use this instead
         [XmlIgnore]
         public IEnumerable<int> RemotePortsSet => _remotePortsSet;
+
+        [XmlElement]
+        public string ChatHeader
+        {
+            get => _chatHeader;
+            set => SetValue(ref _chatHeader, value);
+        }
     }
 
     public class RemotePort : ViewModel

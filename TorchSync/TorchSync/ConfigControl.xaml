@@ -14,7 +14,7 @@
             MethodName="GetAllCommands" />
         <!-- Port Collection Template -->
         <DataTemplate x:Key="Port" DataType="{x:Type local:RemotePort}">
-            <TextBox Text="{Binding Number}" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+            <TextBox Text="{Binding Number}" VerticalAlignment="Center" MinWidth="100" />
         </DataTemplate>
         <!-- Header Label Template -->
         <ControlTemplate x:Key="Header" TargetType="Label">
@@ -49,7 +49,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label Content="Port" />
-                <TextBox Text="{Binding Port}" VerticalAlignment="Center"></TextBox>
+                <TextBox Text="{Binding Port}" VerticalAlignment="Center" MinWidth="100" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label Content="Remote ports" />
@@ -64,6 +64,10 @@
                         <Button Click="OnRemotePortsRemoveClick" Content="Remove" Margin="1" />
                     </UniformGrid>
                 </StackPanel>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Chat Header" />
+                <TextBox Text="{Binding ChatHeader}" VerticalAlignment="Center" MinWidth="100" />
             </StackPanel>
         </ItemsControl>
     </StackPanel>

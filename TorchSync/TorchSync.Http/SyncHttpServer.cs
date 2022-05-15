@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using NLog;
 
 namespace TorchSync.Http
@@ -65,6 +66,11 @@ namespace TorchSync.Http
             catch (Exception e)
             {
                 Log.Error(e);
+
+                var error = SyncHttpResult.FromError(e.ToString());
+                WriteBody(ctx.Response, JsonConvert.SerializeObject(error));
+                ctx.Response.StatusCode = 500;
+                ctx.Response.Close();
             }
         }
 

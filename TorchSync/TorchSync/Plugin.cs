@@ -3,9 +3,11 @@ using System.Windows.Controls;
 using NLog;
 using Torch;
 using Torch.API;
+using Torch.API.Managers;
 using Torch.API.Plugins;
 using Torch.API.Session;
 using TorchSync.Core;
+using Utils.General;
 using Utils.Torch;
 
 namespace TorchSync
@@ -16,8 +18,8 @@ namespace TorchSync
 
         Persistent<Config> _config;
         ConfigControl _control;
-        SyncCore _core;
-        SyncNetwork _network;
+
+        public SyncCore Core { get; private set; }
 
         UserControl IWpfPlugin.GetControl()
         {
@@ -46,31 +48,27 @@ namespace TorchSync
         {
             Log.Info($"config changed: {e?.PropertyName ?? "<init>"}");
 
-            if (e == null || e.PropertyName == nameof(Config.Port))
-            {
-                _network?.UpdateConfig();
-            }
-
-            _core?.UpdateConfig();
+            var restartHttp = e == null || e.PropertyName == nameof(Config.Port);
+            Core?.OnConfigChanged(restartHttp);
         }
 
         void OnSessionLoaded()
         {
-            _network = new SyncNetwork();
-            _network.Start();
+            var chatManager = Torch.CurrentSession.Managers.GetManager<IChatManagerServer>();
+            chatManager.ThrowIfNull(nameof(chatManager));
 
-            _core = new SyncCore(_network);
+            Core = new SyncCore();
+            Core.Start(chatManager);
         }
 
         void OnSessionUnloading()
         {
-            _network?.Close();
-            _core?.Close();
+            Core?.Close();
         }
 
         public override void Update()
         {
-            _core?.Update();
+            Core?.Update();
         }
     }
 }

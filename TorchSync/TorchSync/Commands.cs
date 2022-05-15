@@ -2,6 +2,7 @@
 using System.Linq;
 using Torch.Commands;
 using Torch.Commands.Permissions;
+using TorchSync.Core;
 using Utils.Torch;
 using VRage.Game.ModAPI;
 
@@ -38,6 +39,18 @@ namespace TorchSync
         public void ReloadConfigs() => this.CatchAndReport(() =>
         {
             Plugin.ReloadConfig();
+        });
+
+        [Command("chat")]
+        [Permission(MyPromoteLevel.Moderator)]
+        public void SendChatMessageToOtherServer(int port, string message) => this.CatchAndReport(async () =>
+        {
+            await Plugin.Core.PostChatMessage(port, new ChatMessage
+            {
+                Header = Config.Instance.ChatHeader,
+                Name = "Server",
+                Message = message,
+            });
         });
     }
 }
