@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<PluginManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>Torch Sync</Name>
+    <Guid>F6B78512-F76A-4834-993A-122B1338A8B6</Guid>
+    <Repository>None</Repository>
+    <Version>v1.0.8171.973</Version>
+</PluginManifest>
