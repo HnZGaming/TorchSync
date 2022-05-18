@@ -8,9 +8,10 @@ using VRage.Collections;
 
 namespace TorchSync
 {
-    public sealed class Config : ViewModel
+    public sealed class Config : ViewModel, FileLoggingConfigurator.IConfig
     {
         static readonly ILogger Log = LogManager.GetCurrentClassLogger();
+        public const string DefaultPath = "Logs/TorchSync-${shortdate}.log";
         public static Config Instance { get; set; }
 
         readonly ConcurrentCachingHashSet<IpPort> _remoteIps;
@@ -18,6 +19,10 @@ namespace TorchSync
         bool _countRemotePlayerCount;
         int _port = 8100;
         string _name = "Example";
+        bool _suppressWpfOutput;
+        bool _enableLoggingTrace;
+        bool _enableLoggingDebug;
+        string _logFilePath = DefaultPath;
 
         public Config()
         {
@@ -84,5 +89,33 @@ namespace TorchSync
         // use this instead
         [XmlIgnore]
         public IEnumerable<string> RemoteChatAuthorSet => _remoteChatAuthors;
+
+        [XmlElement]
+        public bool SuppressWpfOutput
+        {
+            get => _suppressWpfOutput;
+            set => SetValue(ref _suppressWpfOutput, value);
+        }
+
+        [XmlElement]
+        public bool EnableLoggingTrace
+        {
+            get => _enableLoggingTrace;
+            set => SetValue(ref _enableLoggingTrace, value);
+        }
+
+        [XmlElement]
+        public bool EnableLoggingDebug
+        {
+            get => _enableLoggingDebug;
+            set => SetValue(ref _enableLoggingDebug, value);
+        }
+
+        [XmlElement]
+        public string LogFilePath
+        {
+            get => _logFilePath;
+            set => SetValue(ref _logFilePath, value);
+        }
     }
 }

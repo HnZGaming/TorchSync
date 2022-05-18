@@ -90,5 +90,25 @@
                 </StackPanel>
             </StackPanel>
         </ItemsControl>
+        <!-- Logs -->
+        <Label Content="Logs" Template="{StaticResource Header}" />
+        <ItemsControl>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Log file path" />
+                <TextBox Text="{Binding LogFilePath}" VerticalAlignment="Center" MinWidth="100" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Suppress console output" />
+                <CheckBox IsChecked="{Binding SuppressWpfOutput}" VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Enable DEBUG logs" />
+                <CheckBox IsChecked="{Binding EnableLoggingDebug}" VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Enable TRACE logs" />
+                <CheckBox IsChecked="{Binding EnableLoggingTrace}" VerticalAlignment="Center" />
+            </StackPanel>
+        </ItemsControl>
     </StackPanel>
 </UserControl>
