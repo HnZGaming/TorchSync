@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
 using Sandbox;
+using Sandbox.Game.Gui;
 using Sandbox.Game.World;
 using Sandbox.ModAPI;
 using Torch.API.Managers;
@@ -82,6 +83,10 @@ namespace TorchSync.Core
                 {
                     return;
                 }
+            }
+            else if (msg.Channel != ChatChannel.Global)
+            {
+                return;
             }
 
             Log.Info($"chat message: {msg.Message}");
