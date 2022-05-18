@@ -18,6 +18,7 @@ namespace TorchSync
 
         Persistent<Config> _config;
         ConfigControl _control;
+        FileLoggingConfigurator _fileLogger;
 
         public SyncCore Core { get; private set; }
 
@@ -32,15 +33,24 @@ namespace TorchSync
             this.OnSessionStateChanged(TorchSessionState.Loaded, OnSessionLoaded);
             this.OnSessionStateChanged(TorchSessionState.Unloading, OnSessionUnloading);
 
+            _fileLogger = new FileLoggingConfigurator(
+                nameof(TorchSync),
+                new[] { $"{nameof(TorchSync)}.*" },
+                Config.DefaultPath);
+
+            _fileLogger.Initialize();
+
             ReloadConfig();
         }
 
         public void ReloadConfig()
         {
-            _config?.Dispose();
+           // _config?.Dispose(); // this saves the file >:(
             _config = Persistent<Config>.Load(this.MakeFilePath("TorchSync.cfg"));
             Config.Instance = _config.Data;
-            _config.Data.PropertyChanged += OnConfigChanged;
+            PropertyChangedEventManager.AddHandler(_config.Data, OnConfigChanged, "");
+            _fileLogger.Configure(Config.Instance);
+            _control?.OnReload();
             OnConfigChanged(null, null);
         }
 

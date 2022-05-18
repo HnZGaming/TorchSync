@@ -3,7 +3,6 @@ using System.Collections.Specialized;
 using System.Xml.Serialization;
 using NLog;
 using Torch;
-using TorchSync.Core;
 using Utils.Torch;
 using VRage.Collections;
 
