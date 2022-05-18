@@ -14,6 +14,7 @@ namespace TorchSync.Http
 
         readonly HttpListener _listener;
         readonly ISyncHttpServerEndpoint _endpoint;
+        string _prefix;
 
         public static Uri MakeUrl(string ip, int port, string path)
         {
@@ -29,14 +30,24 @@ namespace TorchSync.Http
             }
         }
 
-        public SyncHttpServer(string ip, int port, ISyncHttpServerEndpoint endpoint)
+        public SyncHttpServer(ISyncHttpServerEndpoint endpoint)
         {
-            var prefix = MakeUrl(ip, port, "");
-            Log.Debug($"prefix: {prefix}");
-
             _endpoint = endpoint;
             _listener = new HttpListener();
-            _listener.Prefixes.Add(prefix.AbsoluteUri);
+        }
+
+        public void SetPrefix(string ip, int port)
+        {
+            var prefix = MakeUrl(ip, port, "").AbsoluteUri;
+            Log.Debug($"prefix: {prefix}");
+
+            if (_prefix != null)
+            {
+                _listener.Prefixes.Remove(_prefix);
+            }
+
+            _prefix = prefix;
+            _listener.Prefixes.Add(prefix);
         }
 
         public void Close()

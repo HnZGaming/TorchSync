@@ -18,6 +18,7 @@ namespace TorchSync
 
         Persistent<Config> _config;
         ConfigControl _control;
+        FileLoggingConfigurator _fileLogger;
 
         public SyncCore Core { get; private set; }
 
@@ -32,15 +33,23 @@ namespace TorchSync
             this.OnSessionStateChanged(TorchSessionState.Loaded, OnSessionLoaded);
             this.OnSessionStateChanged(TorchSessionState.Unloading, OnSessionUnloading);
 
+            _fileLogger = new FileLoggingConfigurator(
+                nameof(TorchSync),
+                new[] { $"{nameof(TorchSync)}.*" },
+                Config.DefaultPath);
+
+            _fileLogger.Initialize();
+
             ReloadConfig();
         }
 
         public void ReloadConfig()
         {
-            _config?.Dispose();
+            // _config?.Dispose(); // this saves the file >:(
             _config = Persistent<Config>.Load(this.MakeFilePath("TorchSync.cfg"));
             Config.Instance = _config.Data;
-            _config.Data.PropertyChanged += OnConfigChanged;
+            PropertyChangedEventManager.AddHandler(_config.Data, OnConfigChanged, "");
+            _control?.OnReload();
             OnConfigChanged(null, null);
         }
 
@@ -48,8 +57,9 @@ namespace TorchSync
         {
             Log.Info($"config changed: {e?.PropertyName ?? "<init>"}");
 
-            var restartHttp = e == null || e.PropertyName == nameof(Config.Port);
-            Core?.OnConfigChanged(restartHttp);
+            _fileLogger.Configure(Config.Instance);
+
+            Core?.OnConfigChanged();
         }
 
         void OnSessionLoaded()
@@ -57,8 +67,8 @@ namespace TorchSync
             var chatManager = Torch.CurrentSession.Managers.GetManager<IChatManagerServer>();
             chatManager.ThrowIfNull(nameof(chatManager));
 
-            Core = new SyncCore();
-            Core.Start(chatManager);
+            Core = new SyncCore(chatManager);
+            Core.Start();
         }
 
         void OnSessionUnloading()

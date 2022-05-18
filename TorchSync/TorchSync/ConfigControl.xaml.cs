@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using NLog;
-using TorchSync.Core;
+using Utils.General;
 
 namespace TorchSync
 {
@@ -10,13 +10,23 @@ namespace TorchSync
 
         public ConfigControl()
         {
-            DataContext = Config.Instance;
-            InitializeComponent();
+            Initialize();
         }
 
         public int RemotePortsSelectedIndex { get; set; }
 
         public int RemoteChatAuthorSelectedIndex { get; set; }
+
+        public void OnReload()
+        {
+            Dispatcher.Invoke(Initialize);
+        }
+
+        void Initialize()
+        {
+            DataContext = Config.Instance;
+            InitializeComponent();
+        }
 
         void OnRemotePortsAddClick(object sender, RoutedEventArgs e)
         {

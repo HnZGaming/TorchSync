@@ -24,44 +24,42 @@ namespace TorchSync.Core
     public sealed class SyncCore : ISyncHttpServerEndpoint
     {
         static readonly ILogger Log = LogManager.GetCurrentClassLogger();
-        SyncHttpServer _httpServer;
-        SyncHttpClient _httpClient;
-        IChatManagerServer _chatManager;
+        readonly SyncHttpServer _httpServer;
+        readonly SyncHttpClient _httpClient;
+        readonly IChatManagerServer _chatManager;
 
-        public void Start(IChatManagerServer chatManagerServer)
+        public SyncCore(IChatManagerServer chatManagerServer)
         {
+            _httpServer = new SyncHttpServer(this);
+            _httpClient = new SyncHttpClient();
             _chatManager = chatManagerServer;
+        }
+
+        public void Start()
+        {
             _chatManager.MessageRecieved += OnMessageReceived;
 
-            _httpServer = new SyncHttpServer("localhost", Config.Instance.Port, this);
+            _httpServer.SetPrefix("localhost", Config.Instance.Port);
             _httpServer.Start().Forget(Log);
-
-            _httpClient = new SyncHttpClient();
         }
 
         public void Close()
         {
+            _chatManager.MessageRecieved -= OnMessageReceived;
+
             _httpServer?.Close();
             _httpClient?.Close();
         }
 
-        public void OnConfigChanged(bool restartHttpServer)
+        public void OnConfigChanged()
         {
-            if (restartHttpServer)
-            {
-                _httpServer?.Close();
-                _httpServer = new SyncHttpServer("localhost", Config.Instance.Port, this);
-                _httpServer.Start().Forget(Log);
-
-                _httpClient?.Close();
-                _httpClient = new SyncHttpClient();
-            }
-
             if (!Config.Instance.CountRemotePlayerCount)
             {
                 MyDedicatedServerBase_UpdateSteamServerData.UpdateRemotePlayerCollection(Array.Empty<RemotePlayer>());
                 Log.Info("cleared remote player list");
             }
+
+            _httpServer.SetPrefix("localhost", Config.Instance.Port);
         }
 
         public void Update()

@@ -43,6 +43,7 @@ namespace TorchSync
         public void ReloadConfigs() => this.CatchAndReport(() =>
         {
             Plugin.ReloadConfig();
+            Context.Respond("reloaded configs");
         });
 
         [Command("jump", "Jump to other server")]
