@@ -2,7 +2,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using NLog;
-using TorchSync.Core;
 
 namespace TorchSync.Http
 {
