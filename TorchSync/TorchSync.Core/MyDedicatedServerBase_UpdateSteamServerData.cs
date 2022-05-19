@@ -31,39 +31,44 @@ namespace TorchSync.Core
 
         public static void UpdateRemotePlayerCollection(IEnumerable<RemotePlayer> remotePlayers)
         {
+            var oldSet = new HashSet<ulong>();
+            var newSet = new HashSet<ulong>();
+
+            foreach (var a in _remotePlayerInfos)
+            {
+                oldSet.Add(a.SteamId);
+            }
+
             _remotePlayerInfos.ClearList();
 
             foreach (var remotePlayer in remotePlayers)
             {
                 _remotePlayerInfos.Add(remotePlayer);
+                newSet.Add(remotePlayer.SteamId);
             }
 
             _remotePlayerInfos.ApplyChanges();
-            Log.Debug($"remote players: {_remotePlayerInfos.ToStringSeq()}");
 
-            _remoteDataDirty = true;
+            _remoteDataDirty = !newSet.SetEquals(oldSet);
+            Log.Debug($"remote players (changed: {_remoteDataDirty}): {_remotePlayerInfos.ToStringSeq()}");
         }
 
         static bool UpdateSteamServerData(MyDedicatedServerBase __instance, ref bool __field_m_gameServerDataDirty, ref IDictionary __field_m_memberData)
         {
-            // original code copied & pasted
-            if (__field_m_gameServerDataDirty)
+            if (!__field_m_gameServerDataDirty && !_remoteDataDirty) return false;
+
+            Log.Debug($"updating steam server data; local changed: {__field_m_gameServerDataDirty}, remote changed: {_remoteDataDirty}");
+
+            MyGameService.GameServer.SetMapName(__instance.WorldName);
+            MyGameService.GameServer.SetMaxPlayerCount(__instance.MemberLimit);
+
+            foreach (DictionaryEntry o in __field_m_memberData)
             {
-                MyGameService.GameServer.SetMapName(__instance.WorldName);
-                MyGameService.GameServer.SetMaxPlayerCount(__instance.MemberLimit);
-                foreach (DictionaryEntry o in __field_m_memberData)
-                {
-                    var steamId = (ulong)o.Key;
-                    var name = __instance.GetMemberName(steamId);
-                    MyGameService.GameServer.BrowserUpdateUserData(steamId, name, 0);
-                }
-
-                __field_m_gameServerDataDirty = false;
+                var steamId = (ulong)o.Key;
+                var name = __instance.GetMemberName(steamId);
+                MyGameService.GameServer.BrowserUpdateUserData(steamId, name, 0);
+                Log.Debug($"added to steam server data (local): <{steamId}> \"{name}\"");
             }
-
-            // feed remote players if the collection was updated
-            if (!_remoteDataDirty) return false;
-            _remoteDataDirty = false;
 
             Log.Debug($"feeding remote player collection: {_remotePlayerInfos.Count}");
 
@@ -72,11 +77,14 @@ namespace TorchSync.Core
             {
                 var (steamId, name) = (remotePlayer.SteamId, remotePlayer.Name);
                 MyGameService.GameServer.BrowserUpdateUserData(steamId, name, 0);
-                Log.Debug($"<{steamId}>: \"{name}\"");
+                Log.Debug($"added to steam server data (remote): <{steamId}> \"{name}\"");
             }
 
             // remote players -> bots
             MyGameService.GameServer.SetBotPlayerCount(_remotePlayerInfos.Count);
+
+            __field_m_gameServerDataDirty = false;
+            _remoteDataDirty = false;
 
             return false;
         }
