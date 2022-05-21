@@ -154,7 +154,7 @@
         </Compile>
         <Compile Include="System.Runtime.CompilerServices\IsExternalInit.cs" />
         <Compile Include="TorchSync.Core\ChatMessage.cs" />
-        <Compile Include="TorchSync.Core\MyDedicatedServerBase_UpdateSteamServerData.cs" />
+        <Compile Include="TorchSync.Core\Foo.cs" />
         <Compile Include="TorchSync.Core\RemotePlayer.cs" />
         <Compile Include="TorchSync.Core\ServerInfo.cs" />
         <Compile Include="TorchSync.Core\SyncCore.cs" />

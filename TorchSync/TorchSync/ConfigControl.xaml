@@ -90,8 +90,8 @@
                 </StackPanel>
             </StackPanel>
         </ItemsControl>
-        <!-- Logs -->
-        <Label Content="Logs" Template="{StaticResource Header}" />
+        <!-- Debug -->
+        <Label Content="Debugs" Template="{StaticResource Header}" />
         <ItemsControl>
             <StackPanel Orientation="Horizontal">
                 <Label Content="Log file path" />
@@ -108,6 +108,14 @@
             <StackPanel Orientation="Horizontal">
                 <Label Content="Enable TRACE logs" />
                 <CheckBox IsChecked="{Binding EnableLoggingTrace}" VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Specify bot count" />
+                <CheckBox IsChecked="{Binding SpecifyBotCount}" VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" IsEnabled="{Binding SpecifyBotCount}">
+                <Label Content="Bot count" />
+                <TextBox Text="{Binding BotCount}" VerticalAlignment="Center" MinWidth="100" />
             </StackPanel>
         </ItemsControl>
     </StackPanel>
