@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
 using Sandbox;
+using Sandbox.Engine.Networking;
 using Sandbox.Game.Gui;
 using Sandbox.Game.World;
 using Sandbox.ModAPI;
@@ -27,6 +28,7 @@ namespace TorchSync.Core
         readonly SyncHttpServer _httpServer;
         readonly SyncHttpClient _httpClient;
         readonly IChatManagerServer _chatManager;
+        int _remotePlayerCount;
 
         public SyncCore(IChatManagerServer chatManagerServer)
         {
@@ -53,23 +55,30 @@ namespace TorchSync.Core
 
         public void OnConfigChanged()
         {
-            if (!Config.Instance.CountRemotePlayerCount)
-            {
-                MyDedicatedServerBase_UpdateSteamServerData.UpdateRemotePlayerCollection(Array.Empty<RemotePlayer>());
-                Log.Info("cleared remote player list");
-            }
-
             _httpServer.SetPrefix("localhost", Config.Instance.Port);
         }
 
         public void Update()
         {
-            if (Config.Instance.CountRemotePlayerCount)
+            if (Config.Instance.SpecifyPlayerCount)
             {
+                MyGameService.GameServer.SetBotPlayerCount(Config.Instance.PlayerCount);
+            }
+            else if (Config.Instance.CountRemotePlayerCount)
+            {
+                var localPlayerCount = MySession.Static.Players.GetOnlinePlayerCount();
+                var totalPlayerCount = _remotePlayerCount + localPlayerCount;
+                MyGameService.GameServer.SetBotPlayerCount(totalPlayerCount);
+                //Log.Debug($"bot player count: {_remotePlayerCount}");
+
                 if (MySession.Static.GameplayFrameCounter % (60 * 10) == 0)
                 {
                     UpdateRemotePlayerCollection().Forget(Log);
                 }
+            }
+            else
+            {
+                MyGameService.GameServer.SetBotPlayerCount(0);
             }
         }
 
@@ -81,6 +90,16 @@ namespace TorchSync.Core
                 {
                     return;
                 }
+            }
+            else if (msg.Channel == ChatChannel.Private)
+            {
+                //todo
+                return;
+            }
+            else if (msg.Channel == ChatChannel.Faction)
+            {
+                //todo
+                return;
             }
             else if (msg.Channel != ChatChannel.Global)
             {
@@ -115,7 +134,8 @@ namespace TorchSync.Core
 
             var result = await Task.WhenAll(results);
             var remotePlayers = result.SelectMany(r => r);
-            MyDedicatedServerBase_UpdateSteamServerData.UpdateRemotePlayerCollection(remotePlayers);
+            _remotePlayerCount = remotePlayers.Count();
+            Log.Debug($"remote players ({_remotePlayerCount}): {remotePlayers.ToStringSeq()}");
         }
 
         async Task<RemotePlayer[]> GetRemotePlayers(IpPort remoteIp)
@@ -128,7 +148,7 @@ namespace TorchSync.Core
                 return Array.Empty<RemotePlayer>();
             }
 
-            Log.Debug($"get remote players: {body}");
+            Log.Debug($"get remote players ({remoteIp}): {body}");
             return JToken.Parse(body)["remote_players"].ToObject<RemotePlayer[]>();
         }
 
