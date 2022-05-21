@@ -36,7 +36,7 @@ namespace TorchSync.Core
 
         static void RemoveUnusedBones(object __instance, MyCubeGrid grid)
         {
-            Log.Info($"RemoveUnusedBones({grid?.DisplayName}");
+            Log.Info($"RemoveUnusedBones({grid?.DisplayName})");
         }
     }
 }

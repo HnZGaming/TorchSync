@@ -23,8 +23,8 @@ namespace TorchSync
         bool _enableLoggingTrace;
         bool _enableLoggingDebug;
         string _logFilePath = DefaultPath;
-        bool _specifyBotCount;
-        int _botCount;
+        bool _specifyPlayerCount;
+        int _playerCount;
 
         public Config()
         {
@@ -65,17 +65,17 @@ namespace TorchSync
         }
 
         [XmlElement]
-        public bool SpecifyBotCount
+        public bool SpecifyPlayerCount
         {
-            get => _specifyBotCount;
-            set => SetValue(ref _specifyBotCount, value);
+            get => _specifyPlayerCount;
+            set => SetValue(ref _specifyPlayerCount, value);
         }
 
         [XmlElement]
-        public int BotCount
+        public int PlayerCount
         {
-            get => _botCount;
-            set => SetValue(ref _botCount, value);
+            get => _playerCount;
+            set => SetValue(ref _playerCount, value);
         }
 
         [XmlElement]

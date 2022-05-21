@@ -60,13 +60,15 @@ namespace TorchSync.Core
 
         public void Update()
         {
-            if (Config.Instance.SpecifyBotCount)
+            if (Config.Instance.SpecifyPlayerCount)
             {
-                MyGameService.GameServer.SetBotPlayerCount(Config.Instance.BotCount);
+                MyGameService.GameServer.SetBotPlayerCount(Config.Instance.PlayerCount);
             }
             else if (Config.Instance.CountRemotePlayerCount)
             {
-                MyGameService.GameServer.SetBotPlayerCount(_remotePlayerCount);
+                var localPlayerCount = MySession.Static.Players.GetOnlinePlayerCount();
+                var totalPlayerCount = _remotePlayerCount + localPlayerCount;
+                MyGameService.GameServer.SetBotPlayerCount(totalPlayerCount);
                 //Log.Debug($"bot player count: {_remotePlayerCount}");
 
                 if (MySession.Static.GameplayFrameCounter % (60 * 10) == 0)
