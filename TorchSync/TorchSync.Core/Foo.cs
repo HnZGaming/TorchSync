@@ -31,12 +31,12 @@ namespace TorchSync.Core
 
         static void Disconnect(MyDisconnectHelper __instance, MyCubeGrid grid, MyCubeGrid.MyTestDisconnectsReason reason, MySlimBlock testBlock, bool testDisconnect)
         {
-            Log.Info($"Disconnect({grid?.DisplayName}, {reason}, {testBlock?.BlockDefinition?.Id.TypeId}, {testDisconnect})");
+            Log.Info($"Disconnect({grid?.DisplayName}, {reason}, {testBlock?.BlockDefinition?.Id.TypeId}, {testDisconnect})\n{Environment.StackTrace}");
         }
 
         static void RemoveUnusedBones(object __instance, MyCubeGrid grid)
         {
-            Log.Info($"RemoveUnusedBones({grid?.DisplayName})");
+            Log.Info($"RemoveUnusedBones({grid?.DisplayName})\n{Environment.StackTrace}");
         }
     }
 }
