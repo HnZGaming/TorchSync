@@ -1,8 +1,8 @@
 @echo off
 cmd 
 
-set PLUGINS_DIR="C://torches/torch-general/Plugins" "C://torches/torch-earthmoon/Plugins"
-set TORCH_EXE_PATH="C://torches/torch-general/Torch.Server.exe" "C://torches/torch-earthmoon/Torch.Server.exe"
+set PLUGINS_DIR="C://torch-server/Plugins"
+set TORCH_EXE_PATH="C://torch-server/Torch.Server.exe"
 echo "plugins output path: %PLUGINS_DIR%, exe: %TORCH_EXE_PATH%"
 
 REM Prerequisites:
@@ -30,7 +30,6 @@ TorchPluginPackager ^
 
 REM Restarts the torch app. Comment out below if you don't want it.
 
-taskkill /f /im "Torch.Server.exe" /fi "memusage gt 2"
 taskkill /f /im "Torch.Server.exe" /fi "memusage gt 2"
 
 for %%e in (%TORCH_EXE_PATH%) do cmdow /run %%e

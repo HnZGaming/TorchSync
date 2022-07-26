@@ -25,6 +25,8 @@ namespace TorchSync
         string _logFilePath = DefaultPath;
         bool _specifyPlayerCount;
         int _playerCount;
+        IpPort _redirectIpAddress = new();
+        bool _enableRedirect;
 
         public Config()
         {
@@ -105,6 +107,20 @@ namespace TorchSync
         // use this instead
         [XmlIgnore]
         public IEnumerable<string> RemoteChatAuthorSet => _remoteChatAuthors;
+
+        [XmlElement]
+        public bool EnableRedirect
+        {
+            get => _enableRedirect;
+            set => SetValue(ref _enableRedirect, value);
+        }
+
+        [XmlElement]
+        public IpPort RedirectIpAddress
+        {
+            get => _redirectIpAddress;
+            set => SetValue(ref _redirectIpAddress, value);
+        }
 
         [XmlElement]
         public bool SuppressWpfOutput

@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Windows.Controls;
 using NLog;
+using Sandbox.Game.Multiplayer;
+using Sandbox.Game.World;
 using Torch;
 using Torch.API;
 using Torch.API.Managers;
@@ -69,16 +71,33 @@ namespace TorchSync
 
             Core = new SyncCore(chatManager);
             Core.Start();
+
+            MySession.Static.Players.PlayerRequesting += OnPlayerRequesting;
         }
 
         void OnSessionUnloading()
         {
             Core?.Close();
+
+            MySession.Static.Players.PlayerRequesting -= OnPlayerRequesting;
         }
 
         public override void Update()
         {
             Core?.Update();
+        }
+
+        void OnPlayerRequesting(PlayerRequestArgs args)
+        {
+            var playerId = args.PlayerId;
+            Log.Info($"player requesting: {playerId}");
+
+            if (Config.Instance.EnableRedirect)
+            {
+                var redirectIp = Config.Instance.RedirectIpAddress;
+                Core.Jump(playerId.SteamId, redirectIp).Forget(Log);
+                Log.Info($"redirecting player to {redirectIp}");
+            }
         }
     }
 }
