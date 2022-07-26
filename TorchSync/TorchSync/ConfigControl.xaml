@@ -90,6 +90,17 @@
                 </StackPanel>
             </StackPanel>
         </ItemsControl>
+        <Label Content="Redirect" Template="{StaticResource Header}" />
+        <ItemsControl>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Enable Redirect" />
+                <CheckBox IsChecked="{Binding EnableRedirect}" VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Redirect IP Address" />
+                <ContentControl ContentTemplate="{StaticResource Port}" Content="{Binding RedirectIpAddress}" />
+            </StackPanel>
+        </ItemsControl>
         <!-- Debug -->
         <Label Content="Debugs" Template="{StaticResource Header}" />
         <ItemsControl>
