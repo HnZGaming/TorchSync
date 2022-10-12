@@ -31,6 +31,8 @@ namespace TorchSync
 
         public override void Init(ITorchBase torch)
         {
+            Log.Info("torch sync plugin init");
+            
             base.Init(torch);
             this.OnSessionStateChanged(TorchSessionState.Loaded, OnSessionLoaded);
             this.OnSessionStateChanged(TorchSessionState.Unloading, OnSessionUnloading);
@@ -66,6 +68,8 @@ namespace TorchSync
 
         void OnSessionLoaded()
         {
+            Log.Info("torch sync plugin session loaded");
+
             var chatManager = Torch.CurrentSession.Managers.GetManager<IChatManagerServer>();
             chatManager.ThrowIfNull(nameof(chatManager));
 

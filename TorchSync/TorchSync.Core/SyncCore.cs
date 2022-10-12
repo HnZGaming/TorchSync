@@ -143,7 +143,7 @@ namespace TorchSync.Core
             var (success, body) = await _httpClient.SendRequest(remoteIp, "/v1/get_remote_players", "{}");
             if (!success)
             {
-                var error = JsonConvert.DeserializeObject<SyncHttpError>(body);
+                var error = JsonConvertDeserializeObject<SyncHttpError>(body);
                 Log.Warn($"{nameof(GetRemotePlayers)}() error: {error.Message}");
                 return Array.Empty<RemotePlayer>();
             }
@@ -158,7 +158,7 @@ namespace TorchSync.Core
             var (success, body) = await _httpClient.SendRequest(remoteIp, "/v1/post_chat_message", reqBody);
             if (!success)
             {
-                var error = JsonConvert.DeserializeObject<SyncHttpError>(body);
+                var error = JsonConvertDeserializeObject<SyncHttpError>(body);
                 Log.Warn($"{nameof(PostChatMessage)}() error: {error.Message}");
             }
         }
@@ -189,7 +189,7 @@ namespace TorchSync.Core
                 {
                     Log.Debug("post_chat_message");
 
-                    var chatMessage = JsonConvert.DeserializeObject<ChatMessage>(body);
+                    var chatMessage = JsonConvertDeserializeObject<ChatMessage>(body);
                     await VRageUtils.MoveToGameLoop();
 
                     var author = $"<{chatMessage.Header}> {chatMessage.Name}";
@@ -240,12 +240,12 @@ namespace TorchSync.Core
             {
                 if (!success)
                 {
-                    var error = JsonConvert.DeserializeObject<SyncHttpError>(body);
+                    var error = JsonConvertDeserializeObject<SyncHttpError>(body);
                     Log.Warn($"{nameof(GetRemoteServerInfo)}() error: {error.Message}");
                     continue;
                 }
 
-                var serverInfo = JsonConvert.DeserializeObject<ServerInfo>(body);
+                var serverInfo = JsonConvertDeserializeObject<ServerInfo>(body);
                 outs.Add(serverInfo);
             }
 
@@ -273,6 +273,18 @@ namespace TorchSync.Core
 
             var msg = new JoinServerMessage(steamAddress);
             ModCommunication.SendMessageTo(msg, steamId);
+        }
+
+        static T JsonConvertDeserializeObject<T>(string text)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(text);
+            }
+            catch (JsonReaderException e)
+            {
+                throw new InvalidOperationException($"json read failed; error: {e.Message}; json text: {text}");
+            }
         }
     }
 }
