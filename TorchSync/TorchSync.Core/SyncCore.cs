@@ -84,6 +84,8 @@ namespace TorchSync.Core
 
         void OnMessageReceived(TorchChatMessage msg, ref bool consumed)
         {
+            if (!Config.Instance.EnableChatSync) return;
+
             if (msg.AuthorSteamId == null) // server message
             {
                 if (!Config.Instance.RemoteChatAuthorSet.Contains(msg.Author))

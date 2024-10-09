@@ -76,7 +76,11 @@
                 </StackPanel>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <Label Content="Remote chat authors" />
+                <Label Content="Enable chat sync" />
+                <CheckBox IsChecked="{Binding EnableChatSync}" VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Chat-synced bots" />
                 <StackPanel Orientation="Vertical">
                     <ListBox
                         ItemsSource="{Binding RemoteChatAuthors}"

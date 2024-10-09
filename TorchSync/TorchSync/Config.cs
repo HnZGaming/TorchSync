@@ -27,6 +27,7 @@ namespace TorchSync
         int _playerCount;
         IpPort _redirectIpAddress = new();
         bool _enableRedirect;
+        bool _enableChatSync;
 
         public Config()
         {
@@ -102,6 +103,13 @@ namespace TorchSync
         {
             get => _name;
             set => SetValue(ref _name, value);
+        }
+
+        [XmlElement]
+        public bool EnableChatSync
+        {
+            get => _enableChatSync;
+            set => SetValue(ref _enableChatSync, value);
         }
 
         // use this instead
